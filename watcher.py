@@ -6,7 +6,7 @@ import numpy as np
 from datetime import datetime as dt
 
 
-def build_card_df(card_name, desired_price):
+def build_card_df(card_name, desired_price, remove_blanks=True):
     scryfall_api_url = "https://api.scryfall.com/cards/search?q="+card_name+"&unique=prints"
     api_response = requests.get(scryfall_api_url).json()
     i = 0
@@ -35,7 +35,8 @@ def build_card_df(card_name, desired_price):
 
     # some prices are missing, and price needs to be a floating point value
     cards_data['price_usd'] = np.float64(cards_data["price_usd"])
-    cards_data = cards_data[np.isnan(cards_data["price_usd"]) == False] 
+    if(remove_blanks):
+        cards_data = cards_data[np.isnan(cards_data["price_usd"]) == False] 
 
     # add a field to compare price to desired price
     cards_data['diff_to_desired'] = cards_data["price_usd"] - desired_price
@@ -61,7 +62,7 @@ def main():
         card_name = card[1]
         desired_price = card[2]
         print(f"Card Name: {card_name} || Desired Price: {desired_price}")
-        price_data = build_card_df(card_name, desired_price)
+        price_data = build_card_df(card_name, desired_price, remove_blanks=False)
         print(price_data.head())
         sleep(MILLISECONDS_DELAY/1000)
 
