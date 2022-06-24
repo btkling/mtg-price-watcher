@@ -1,4 +1,5 @@
 from cmath import isnan
+from time import sleep
 import requests
 import pandas as pd
 import numpy as np
@@ -42,8 +43,9 @@ def build_card_df(card_name, desired_price):
 
     return cards_data.sort_values(by=["price_usd"])
 
-
-
+def read_cards_to_check():
+    df = pd.read_csv("cards_to_check.csv", header=0)
+    return df
 
 
 
@@ -51,12 +53,20 @@ def build_card_df(card_name, desired_price):
 def main():
     MILLISECONDS_DELAY = 100 # Scryfall requests a 50-100 Millisecond delay between requests
 
-    # TODO refactor this to read an input file
-    cards_to_check = ["Bitterblossom"]
-    prices_to_check = [20]
+    cards_to_check = read_cards_to_check()
+    print(cards_to_check.head())
+    # print(cards_to_check.columns())
 
-    price_data = build_card_df(cards_to_check[0], prices_to_check[0])
-    print(price_data.head())
+    for card in cards_to_check.itertuples():
+        card_name = card[1]
+        desired_price = card[2]
+        print(f"Card Name: {card_name} || Desired Price: {desired_price}")
+        price_data = build_card_df(card_name, desired_price)
+        print(price_data.head())
+        sleep(MILLISECONDS_DELAY/1000)
+
+    # price_data = build_card_df(cards_to_check['card_name'][0], cards_to_check['desired_price'][0])
+    # print(price_data.head())
 
 if __name__ == "__main__":
     main()
