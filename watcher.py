@@ -15,18 +15,26 @@ def build_card_df(card_name, desired_price, remove_blanks=True, only_desired=Fal
     # Get all of the IDs
 
     for count, val in enumerate(api_response['data']):
-        #id_all.append(val['tcgplayer_id'])
+        # digital only cards will not have a link to TCG Player
+        if(val['digital']):
+            continue
+
         card_name = val['name']
         set_code = val['set']
         set_name = val['set_name']
         price = val['prices']['usd']
+        if(np.float64(price)<=desired_price):
+            tcgplayer_uri = val['purchase_uris']['tcgplayer']
+        else:
+            tcgplayer_uri = ""
         card = pd.DataFrame(
                 {
                     "card_name": card_name,
                     "set_code": set_code,
                     "set_name": set_name,
                     "price_usd": price,
-                    "checked_timestamp": pd.to_datetime(dt.now())
+                    "tcgplayer_uri": tcgplayer_uri,
+                    "checked_timestamp": pd.to_datetime(dt.today())
                 },
                 index = [i]
             )
@@ -52,7 +60,9 @@ def build_card_df(card_name, desired_price, remove_blanks=True, only_desired=Fal
                         "price_usd",
                         "desired_price",
                         "diff_to_desired",
-                        "is_desired"]]
+                        "is_desired",
+                        "tcgplayer_uri",
+                        "checked_timestamp"]]
 
     return output.sort_values(by=["price_usd"])
 
@@ -73,10 +83,11 @@ def main():
     for card in cards_to_check.itertuples():
         card_name = card[1]
         desired_price = card[2]
+        print("")
         print("--------------------------------------------------------------")
         print(f"Card Name: {card_name} || Desired Price: {desired_price}")
         print("--------------------------------------------------------------")
-        price_data = build_card_df(card_name, desired_price)
+        price_data = build_card_df(card_name, desired_price, remove_blanks=False)
         print(price_data.head())
         sleep(MILLISECONDS_DELAY/1000)
 
