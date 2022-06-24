@@ -1,3 +1,4 @@
+from cmath import isnan
 import requests
 import pandas as pd
 import numpy as np
@@ -9,17 +10,19 @@ def build_card_df(card_name, desired_price):
     api_response = requests.get(scryfall_api_url).json()
     i = 0
 
-    cards_data = pd.DataFrame(columns = ["card_name", "set_name", "price_usd", "checked_timestamp"])
+    cards_data = pd.DataFrame()
     # Get all of the IDs
 
     for count, val in enumerate(api_response['data']):
         #id_all.append(val['tcgplayer_id'])
         card_name = val['name']
+        set_code = val['set']
         set_name = val['set_name']
         price = val['prices']['usd']
         card = pd.DataFrame(
                 {
                     "card_name": card_name,
+                    "set_code": set_code,
                     "set_name": set_name,
                     "price_usd": price,
                     "checked_timestamp": pd.to_datetime(dt.now())
@@ -31,20 +34,13 @@ def build_card_df(card_name, desired_price):
 
     # some prices are missing, and price needs to be a floating point value
     cards_data['price_usd'] = np.float64(cards_data["price_usd"])
-    
-    # get minimum price
-    minprice = cards_data.groupby("card_name").agg({'price_usd': 'min'}).reset_index()
+    cards_data = cards_data[np.isnan(cards_data["price_usd"]) == False] 
 
-    # trim dataset to only look at values where price = minprice
-    cards_minprice = cards_data.merge(minprice, how="inner")
+    # add a field to compare price to desired price
+    cards_data['diff_to_desired'] = cards_data["price_usd"] - desired_price
+    cards_data['desired_price'] = cards_data["price_usd"] <= desired_price
 
-
-    return cards_data
-
-    # check if price is less or equal to the desired price
-    cards_data = cards_data[cards_data["price_usd"] <= desired_price]
-
-    # return dataframe sorted by difference between actual and desired price
+    return cards_data.sort_values(by=["price_usd"])
 
 
 
@@ -53,13 +49,14 @@ def build_card_df(card_name, desired_price):
 
 
 def main():
+    MILLISECONDS_DELAY = 100 # Scryfall requests a 50-100 Millisecond delay between requests
+
     # TODO refactor this to read an input file
-    print("123")
-    cards_to_check = ["Life from the Loam"]
-    prices_to_check = [500]
+    cards_to_check = ["Bitterblossom"]
+    prices_to_check = [20]
+
     price_data = build_card_df(cards_to_check[0], prices_to_check[0])
-    print(price_data.head(500))
-    print("abc")
+    print(price_data.head())
 
 if __name__ == "__main__":
     main()
