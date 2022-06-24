@@ -4,7 +4,7 @@ import requests
 import pandas as pd
 import numpy as np
 from datetime import datetime as dt
-
+from os.path import exists
 
 def build_card_df(card_name, desired_price, remove_blanks=True, only_desired=False):
     scryfall_api_url = "https://api.scryfall.com/cards/search?q="+card_name+"&unique=prints"
@@ -91,7 +91,10 @@ def main():
         print(price_data.head())
         sleep(MILLISECONDS_DELAY/1000)
 
-        price_data.to_csv('price_tracker.csv',mode='a', header=False, index=False)
+        if(not exists("price_tracker.csv")):
+            price_data.to_csv('price_tracker.csv',mode='w', index=False)    
+        else:
+            price_data.to_csv('price_tracker.csv',mode='a', header=False, index=False)
     # price_data = build_card_df(cards_to_check['card_name'][0], cards_to_check['desired_price'][0])
     # print(price_data.head())
 
