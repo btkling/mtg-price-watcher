@@ -91,7 +91,7 @@ def main():
         print(price_data.head())
         sleep(MILLISECONDS_DELAY/1000)
 
-        price_data.to_csv('price_tracker.csv',mode='a')
+        price_data.to_csv('price_tracker.csv',mode='a', header=False, index=False)
     # price_data = build_card_df(cards_to_check['card_name'][0], cards_to_check['desired_price'][0])
     # print(price_data.head())
 
