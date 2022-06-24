@@ -6,7 +6,7 @@ import numpy as np
 from datetime import datetime as dt
 
 
-def build_card_df(card_name, desired_price, remove_blanks=True):
+def build_card_df(card_name, desired_price, remove_blanks=True, only_desired=False):
     scryfall_api_url = "https://api.scryfall.com/cards/search?q="+card_name+"&unique=prints"
     api_response = requests.get(scryfall_api_url).json()
     i = 0
@@ -40,9 +40,21 @@ def build_card_df(card_name, desired_price, remove_blanks=True):
 
     # add a field to compare price to desired price
     cards_data['diff_to_desired'] = cards_data["price_usd"] - desired_price
-    cards_data['desired_price'] = cards_data["price_usd"] <= desired_price
+    cards_data['desired_price'] = desired_price
+    cards_data['is_desired'] = cards_data["price_usd"] <= desired_price
 
-    return cards_data.sort_values(by=["price_usd"])
+    if(only_desired):
+        cards_data = cards_data[cards_data["price_usd"]<= desired_price]
+
+    output = cards_data[["card_name",
+                        "set_code",
+                        "set_name",
+                        "price_usd",
+                        "desired_price",
+                        "diff_to_desired",
+                        "is_desired"]]
+
+    return output.sort_values(by=["price_usd"])
 
 def read_cards_to_check():
     df = pd.read_csv("cards_to_check.csv", header=0)
@@ -61,8 +73,10 @@ def main():
     for card in cards_to_check.itertuples():
         card_name = card[1]
         desired_price = card[2]
+        print("--------------------------------------------------------------")
         print(f"Card Name: {card_name} || Desired Price: {desired_price}")
-        price_data = build_card_df(card_name, desired_price, remove_blanks=False)
+        print("--------------------------------------------------------------")
+        price_data = build_card_df(card_name, desired_price)
         print(price_data.head())
         sleep(MILLISECONDS_DELAY/1000)
 
