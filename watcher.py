@@ -47,22 +47,23 @@ def build_card_df(card_name, desired_price, remove_blanks=True, only_desired=Fal
         cards_data = cards_data[np.isnan(cards_data["price_usd"]) == False] 
 
     # add a field to compare price to desired price
-    cards_data['diff_to_desired'] = cards_data["price_usd"] - desired_price
+    cards_data['diff_to_desired'] = round(cards_data["price_usd"] - desired_price, 2)
     cards_data['desired_price'] = desired_price
     cards_data['is_desired'] = cards_data["price_usd"] <= desired_price
 
     if(only_desired):
         cards_data = cards_data[cards_data["price_usd"]<= desired_price]
 
-    output = cards_data[["card_name",
+    output = cards_data[["checked_timestamp",
+                        "card_name",
                         "set_code",
                         "set_name",
                         "price_usd",
                         "desired_price",
                         "diff_to_desired",
                         "is_desired",
-                        "tcgplayer_uri",
-                        "checked_timestamp"]]
+                        "tcgplayer_uri"
+                        ]]
 
     return output.sort_values(by=["price_usd"])
 
