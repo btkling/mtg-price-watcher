@@ -54,7 +54,7 @@ def build_card_df(card_name, desired_price, remove_blanks=True, only_desired=Fal
     if(only_desired):
         cards_data = cards_data[cards_data["price_usd"]<= desired_price]
 
-    output = cards_data[["checked_timestamp",
+    output = cards_data.reset_index()[["checked_timestamp",
                         "card_name",
                         "set_code",
                         "set_name",
@@ -78,8 +78,6 @@ def main():
     MILLISECONDS_DELAY = 100 # Scryfall requests a 50-100 Millisecond delay between requests
 
     cards_to_check = read_cards_to_check()
-    print(cards_to_check.head())
-    # print(cards_to_check.columns())
 
     for card in cards_to_check.itertuples():
         card_name = card[1]
@@ -96,8 +94,6 @@ def main():
             price_data.to_csv('price_tracker.csv',mode='w', index=False)    
         else:
             price_data.to_csv('price_tracker.csv',mode='a', header=False, index=False)
-    # price_data = build_card_df(cards_to_check['card_name'][0], cards_to_check['desired_price'][0])
-    # print(price_data.head())
 
 if __name__ == "__main__":
     main()
