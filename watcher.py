@@ -22,6 +22,7 @@ def build_card_df(card_name, desired_price, remove_blanks=True, only_desired=Fal
         card_name = val['name']
         set_code = val['set']
         set_name = val['set_name']
+        collector_num = val['collector_number']
         price = val['prices']['usd']
         if(np.float64(price)<=desired_price):
             tcgplayer_uri = val['purchase_uris']['tcgplayer']
@@ -32,6 +33,7 @@ def build_card_df(card_name, desired_price, remove_blanks=True, only_desired=Fal
                     "card_name": card_name,
                     "set_code": set_code,
                     "set_name": set_name,
+                    "collector_num": collector_num,
                     "price_usd": price,
                     "tcgplayer_uri": tcgplayer_uri,
                     "checked_timestamp": pd.to_datetime(dt.today())
@@ -58,6 +60,7 @@ def build_card_df(card_name, desired_price, remove_blanks=True, only_desired=Fal
                         "card_name",
                         "set_code",
                         "set_name",
+                        "collector_num",
                         "price_usd",
                         "desired_price",
                         "diff_to_desired",
