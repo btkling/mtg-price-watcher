@@ -70,8 +70,11 @@ def build_card_df(card_name, desired_price, remove_blanks=True, only_desired=Fal
 
     return output.sort_values(by=["price_usd"])
 
-def read_cards_to_check():
-    df = pd.read_csv("cards_to_check.csv", header=0)
+def read_cards_to_check(fp=None):
+    if fp:
+        df = pd.read_csv(fp + "cards_to_check.csv", header=0)
+    else:
+        df = pd.read_csv("cards_to_check.csv", header=0)
     return df
 
 
@@ -80,7 +83,9 @@ def read_cards_to_check():
 def main():
     MILLISECONDS_DELAY = 100 # Scryfall requests a 50-100 Millisecond delay between requests
 
-    cards_to_check = read_cards_to_check()
+    fp = "/mnt/e/git/mtg-price-watcher/"
+
+    cards_to_check = read_cards_to_check(fp)
 
     for card in cards_to_check.itertuples():
         card_name = card[1]
@@ -93,10 +98,16 @@ def main():
         print(price_data.head())
         sleep(MILLISECONDS_DELAY/1000)
 
-        if(not exists("price_tracker.csv")):
-            price_data.to_csv('price_tracker.csv',mode='w', index=False)    
+        if fp:
+            if(not exists(fp+"price_tracker.csv")):
+                price_data.to_csv(fp+'price_tracker.csv',mode='w', index=False)    
+            else:
+                price_data.to_csv(fp+'price_tracker.csv',mode='a', header=False, index=False)
         else:
-            price_data.to_csv('price_tracker.csv',mode='a', header=False, index=False)
+            if(not exists("price_tracker.csv")):
+                price_data.to_csv('price_tracker.csv',mode='w', index=False)    
+            else:
+                price_data.to_csv('price_tracker.csv',mode='a', header=False, index=False)
 
 if __name__ == "__main__":
     main()
