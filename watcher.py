@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime as dt
 from os.path import exists
+import sys
 
 def build_card_df(card_name, desired_price, remove_blanks=True, only_desired=False):
     scryfall_api_url = "https://api.scryfall.com/cards/search?q="+card_name+"&unique=prints"
@@ -83,7 +84,11 @@ def read_cards_to_check(fp=None):
 def main():
     MILLISECONDS_DELAY = 100 # Scryfall requests a 50-100 Millisecond delay between requests
 
-    fp = "/mnt/e/git/mtg-price-watcher/"
+    fp = None
+    if (sys.argv[0] is not None):
+        print("running without setting working directory.")
+    else:
+        fp = "/mnt/e/git/mtg-price-watcher/"
 
     cards_to_check = read_cards_to_check(fp)
 
