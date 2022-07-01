@@ -28,6 +28,15 @@ def print_desired(price_history, lookback_days):
 # TODO predict cards that will achieve desired price in next n days
 
 
+# TODO cheapest current printing, full price history
+def cheapest_history(price_history):
+    '''
+    Given a data frame (price_history), return a new dataframe subset to the
+    elements of the original where only the price history of the cheapest printing of each 
+    card is returned
+    '''
+
+
 def main():
     print("hello")
     fp = "/mnt/e/git/mtg-price-watcher/"
