@@ -85,7 +85,7 @@ def main():
     MILLISECONDS_DELAY = 100 # Scryfall requests a 50-100 Millisecond delay between requests
 
     fp = None
-    if (sys.argv[0] is not None):
+    if (len(sys.argv) > 1):
         print("running without setting working directory.")
     else:
         fp = "/mnt/e/git/mtg-price-watcher/"
