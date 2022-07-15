@@ -9,9 +9,6 @@ def read_price_data(filepath=None):
     
     return df
 
-# TODO analyze card trends
-
-
 def print_desired(price_history, lookback_days):
     '''
     Given a data frame (price history), print out the entries that have a desired price in the past 48 hours.
