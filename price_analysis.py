@@ -23,6 +23,14 @@ def print_desired(price_history, lookback_days):
 
 
 # TODO predict cards that will achieve desired price in next n days
+def desire_predictor(price_history, future_days=7):
+    '''
+    Given a data frame (price_history), return a new dataframe with all card/set/cn combinations that we predict to achieve the 
+    desired price in the next n days (default 7)
+
+    Time Series Prediction with ARIMA forecasting logic
+    '''
+    return price_history
 
 
 # TODO cheapest current printing, full price history
