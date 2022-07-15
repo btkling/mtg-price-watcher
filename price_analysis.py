@@ -34,12 +34,24 @@ def desire_predictor(price_history, future_days=7):
 
 
 # TODO cheapest current printing, full price history
-def cheapest_history(price_history):
+def cheapest_history(price_history, num_entries=-1):
     '''
     Given a data frame (price_history), return a new dataframe subset to the
     elements of the original where only the price history of the cheapest printing of each 
     card is returned
     '''
+
+    '''
+    PSEUDO -- STEPS
+    ===========================================================
+    1. GET MOST RECENT PRICE FOR EACH CARD/SET/COLLECTOR NUMBER
+    2. GET LOWEST PRICE FOR EACH CARD -> RECORD SET/CN
+    3. JOIN BACK TO ORIG DATA WITH CARD/SET/CN MATCH
+    4. RETURN PRICE HISTORY, LIMITED TO MOST RECENT N ENTRIES
+        DEFAULTS TO RETURN ALL ENTRIES
+    ===========================================================
+    '''
+    return price_history
 
 
 def main():
