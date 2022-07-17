@@ -2,16 +2,39 @@ import pandas as pd
 from datetime import datetime as dt
 
 def read_price_data(filepath=None):
-    if filepath:
+    '''Read in data with price history
+    
+    # Parameters
+
+    filepath: string, default=None
+        optionally supply a filepath to the price data
+
+    # Returns
+
+    DataFrame with the price data
+    '''
+    if filepath is not None:
         df = pd.read_csv(filepath + "price_tracker.csv")
     else:
         df = pd.read_csv("price_tracker.csv")
     
     return df
 
-def print_desired(price_history, lookback_days):
+def print_desired(price_history, lookback_days=2):
     '''
-    Given a data frame (price history), print out the entries that have a desired price in the past 48 hours.
+    Return the entries that have a desired price in the past ```lookback-days``` hours.
+
+    # Parameters:
+    
+    price_history : DataFrame
+        DataFrame with price information, output from watcher.py
+    lookback_days: int, default 2
+        number of days to scan back in time
+
+
+    # Returns 
+
+    None
     '''
     lookback = pd.to_datetime(dt.today()) - pd.Timedelta(lookback_days, unit='day')
 
@@ -19,26 +42,39 @@ def print_desired(price_history, lookback_days):
     price_history_lookback_valid = price_history_lookback[ price_history_lookback["is_desired"] == True ]
     
     print(price_history_lookback_valid.head(100))
+    # TODO refactor this to return a DataFrame
     return
 
 
-# TODO predict cards that will achieve desired price in next n days
 def desire_predictor(price_history, future_days=7):
     '''
-    Given a data frame (price_history), return a new dataframe with all card/set/cn combinations that we predict to achieve the 
-    desired price in the next n days (default 7)
+    Find all card/set/cn combinations that we predict to achieve desired price in the next n days
 
-    Time Series Prediction with ARIMA forecasting logic
+    # Parameters:
+    :price_history: DataFrame, the dataframe containing the price information, output from watcher.py
+
+    :future_days: int(default 7), number of days to look forward
+
+    # Return:
+    DataFrame - frame with all Card / Set / Collector Number combinations meeting the prediction criteria
+    
     '''
     return price_history
+    # TODO predict cards that will achieve desired price in next n days
 
 
 # TODO cheapest current printing, full price history
 def cheapest_history(price_history, num_entries=-1):
     '''
-    Given a data frame (price_history), return a new dataframe subset to the
-    elements of the original where only the price history of the cheapest printing of each 
-    card is returned
+    #TODO finish Doc String
+    Returns the price history of the cheapest printing of each card
+
+    # Parameters:
+
+    price_history : DataFrame
+        the dataframe containing the price information, output from watcher.py
+    num_entries : integer, default -1
+        number of historical price records to return
     '''
 
     '''
@@ -55,7 +91,6 @@ def cheapest_history(price_history, num_entries=-1):
 
 
 def main():
-    print("hello")
     fp = "/mnt/e/git/mtg-price-watcher/"
     price_history = read_price_data()
     print(price_history.head())
