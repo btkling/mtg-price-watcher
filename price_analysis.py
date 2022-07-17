@@ -24,7 +24,7 @@ def read_price_data(filepath=None):
 
 def print_desired(price_history, lookback_days=2):
     '''
-    Return the entries that have a desired price in the past ```lookback-days``` hours.
+    Return the entries that have a desired price in the past ```lookback-days```.
 
     # Parameters:
     
@@ -153,7 +153,7 @@ def main():
     fp = "/mnt/e/git/mtg-price-watcher/"
     price_history = read_price_data()
     # print(price_history.head())
-    print_desired(price_history, 2)
+    print_desired(cheapest_history(price_history,1), 1)
     print(cheapest_history(price_history, 1)[["card_name", "set_code", "collector_num", "price_usd", "desired_price"]])
 
     price_history = add_moving_avg(price_history)
