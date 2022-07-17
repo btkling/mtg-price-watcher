@@ -64,10 +64,8 @@ def desire_predictor(price_history, future_days=7):
     # TODO predict cards that will achieve desired price in next n days
 
 
-# TODO cheapest current printing, full price history
 def cheapest_history(price_history : pd.DataFrame, num_entries=-1):
     '''
-    #TODO finish Doc String
     Returns the price history of the cheapest printing of each card
 
     # Parameters:
@@ -76,17 +74,6 @@ def cheapest_history(price_history : pd.DataFrame, num_entries=-1):
         the dataframe containing the price information, output from watcher.py
     num_entries : integer, default -1
         number of historical price records to return
-    '''
-
-    '''
-    PSEUDO -- STEPS
-    ===========================================================
-    1. GET MOST RECENT PRICE FOR EACH CARD/SET/COLLECTOR NUMBER
-    2. GET LOWEST PRICE FOR EACH CARD -> RECORD SET/CN
-    3. JOIN BACK TO ORIG DATA WITH CARD/SET/CN MATCH
-    4. RETURN PRICE HISTORY, LIMITED TO MOST RECENT N ENTRIES
-        DEFAULTS TO RETURN ALL ENTRIES
-    ===========================================================
     '''
 
     maxdate = price_history.groupby(["card_name", "set_code", "collector_num"]).agg({"checked_timestamp" : "max"}).reset_index()
