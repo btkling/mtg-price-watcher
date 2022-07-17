@@ -44,7 +44,6 @@ def print_desired(price_history, lookback_days=2):
     price_history_lookback_valid = price_history_lookback[ price_history_lookback["is_desired"] == True ]
     
     print(price_history_lookback_valid.head(100))
-    # TODO refactor this to return a DataFrame
     return
 
 
