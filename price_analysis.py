@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from datetime import datetime as dt
 
 def read_price_data(filepath=None):
@@ -64,7 +65,7 @@ def desire_predictor(price_history, future_days=7):
 
 
 # TODO cheapest current printing, full price history
-def cheapest_history(price_history, num_entries=-1):
+def cheapest_history(price_history : pd.DataFrame, num_entries=-1):
     '''
     #TODO finish Doc String
     Returns the price history of the cheapest printing of each card
@@ -87,14 +88,48 @@ def cheapest_history(price_history, num_entries=-1):
         DEFAULTS TO RETURN ALL ENTRIES
     ===========================================================
     '''
-    return price_history
+
+    maxdate = price_history.groupby(["card_name", "set_code", "collector_num"]).agg({"checked_timestamp" : "max"}).reset_index()
+
+    latest_record = maxdate.merge(price_history, 
+                            left_on=["card_name", "set_code", "collector_num", "checked_timestamp"],
+                            right_on=["card_name", "set_code", "collector_num", "checked_timestamp"])
+
+    
+    latest_record = latest_record[~np.isnan(latest_record["price_usd"])]
+
+    lowest_price = latest_record.groupby("card_name").agg({"price_usd" : "min"})
+
+    cards_to_join = latest_record.merge(lowest_price,   
+                                        left_on = ["card_name", "price_usd"],
+                                        right_on = ["card_name", "price_usd"])
+
+    full_set_lowest = price_history.merge(cards_to_join,
+                                          left_on=["card_name", "set_code", "collector_num"],
+                                          right_on=["card_name", "set_code", "collector_num"],
+                                          suffixes=("", "_ctj"))
+    
+    if num_entries > -1:
+        full_set_lowest = full_set_lowest.groupby(["card_name", "set_code", "collector_num"]).tail(num_entries).reset_index(drop=True)
+    
+    return full_set_lowest[["checked_timestamp",
+                            "card_name",
+                            "set_code",
+                            "set_name",
+                            "collector_num",
+                            "price_usd",
+                            "desired_price",
+                            "diff_to_desired",
+                            "is_desired",
+                            "tcgplayer_uri"]]
 
 
 def main():
     fp = "/mnt/e/git/mtg-price-watcher/"
     price_history = read_price_data()
-    print(price_history.head())
+    # print(price_history.head())
     print_desired(price_history, 2)
+    print(cheapest_history(price_history, 1)[["card_name", "set_code", "collector_num", "price_usd", "desired_price"]])
 
 if __name__ == "__main__":
     main()
