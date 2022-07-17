@@ -111,7 +111,7 @@ def cheapest_history(price_history : pd.DataFrame, num_entries=-1):
                             "is_desired",
                             "tcgplayer_uri"]]
 
-def add_moving_avg(price_history: pd.DataFrame, usecheapest=True, return_last=True):
+def add_moving_avg(price_history: pd.DataFrame, usecheapest=True, remove_nan=False, return_last=True):
     '''Plot a moving average for each unique card combination
     
     # Parameters:
@@ -122,6 +122,10 @@ def add_moving_avg(price_history: pd.DataFrame, usecheapest=True, return_last=Tr
         if you want to specify a destination filename for the printings to go
     usecheapest : bool, default True
         print only the records from the cheapest printing of the card
+    remove_nan : bool, default False
+        remove entries without a SMA entry?
+    return_last : bool, default True
+        remove all but the last entry for each card?
 
     # Returns:
 
@@ -137,7 +141,8 @@ def add_moving_avg(price_history: pd.DataFrame, usecheapest=True, return_last=Tr
 
     price_history["price_usd_SMA_delta"] = price_history["price_usd"] - price_history["price_usd_SMA7"]
 
-    price_history = price_history[~np.isnan(price_history["price_usd_SMA7"])].reset_index()
+    if remove_nan:
+        price_history = price_history[~np.isnan(price_history["price_usd_SMA7"])].reset_index()
     
     if return_last:
         price_history = price_history.groupby(["card_name","set_code","set_name","collector_num"]).tail(1).reset_index(drop=True)
