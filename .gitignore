@@ -1,4 +1,6 @@
 price_tracker.csv
 __pycache__
 config.json
-image.png
+images/
+images/image.png
+images/image2.png
