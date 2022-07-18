@@ -26,6 +26,33 @@ def load_config(file_path):
 
     return jscfg
 
+def attach_file(attachment_file, mail : MIMEMultipart):
+    '''attach a file to the mail object
+
+    # Parameters
+
+    attachment_file : str
+        the file to be attached, assume that is in the same working directory
+    mail : MIMEMultipart
+        the mail object that we are building
+
+    # Returns
+    MIMEMultipart object with the file attached
+
+    None
+    '''
+    file_path = attachment_file
+    mimeBase = MIMEBase("application", "octet-stream")
+    with open(file_path, "rb") as file:
+        mimeBase.set_payload(file.read())
+    encoders.encode_base64(mimeBase)
+    mimeBase.add_header("Content-Disposition", f"attachment; filename={Path(file_path).name}")
+    mail.attach(mimeBase)
+
+    return mail
+
+
+
 def main():
     print("hi")
 
@@ -63,13 +90,8 @@ def main():
         mail.attach(html_content)
 
         # Add an attachment
-        file_path = "image.png"
-        mimeBase = MIMEBase("application", "octet-stream")
-        with open(file_path, "rb") as file:
-            mimeBase.set_payload(file.read())
-        encoders.encode_base64(mimeBase)
-        mimeBase.add_header("Content-Disposition", f"attachment; filename={Path(file_path).name}")
-        mail.attach(mimeBase)
+        mail = attach_file("images/image.png", mail)
+        mail = attach_file("images/image2.png", mail)
 
         server.sendmail(email, email, mail.as_string())
 
