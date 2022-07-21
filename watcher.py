@@ -26,7 +26,7 @@ def build_card_df(card_name, desired_price, remove_blanks=True, only_desired=Fal
         collector_num = val['collector_number']
         price = val['prices']['usd']
         if(np.float64(price)<=desired_price):
-            tcgplayer_uri = val['purchase_uris']['tcgplayer']
+            tcgplayer_uri = val['purchase_uris']['tcgplayer'].split("?")[0]
         else:
             tcgplayer_uri = ""
         card = pd.DataFrame(
