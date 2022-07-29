@@ -5,6 +5,7 @@ import smtplib
 import ssl
 import json
 import os
+import sys
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
@@ -56,6 +57,11 @@ def attach_file(attachment_file, mail : MIMEMultipart):
 
 
 def main():
+    if (len(sys.argv) > 1):
+        print("running without setting working directory.")
+        fp = ""
+    else:
+        fp = "/mnt/e/git/mtg-price-watcher/"
 
     ts = pd.Timestamp.now()
     date = ts.strftime("%A, %B %d %Y")
@@ -63,7 +69,7 @@ def main():
     print(ts)
     print(f"Hello: today is {date}. The time now is {time}.")
 
-    jscfg = load_config("config.json")
+    jscfg = load_config(fp+"config.json")
     # print(jscfg)
     # for k,v in jscfg.items():
         # print(f"Key {k} || Value {v}")
@@ -74,7 +80,7 @@ def main():
     to_email = jscfg["to_email"]
     password = jscfg["password"]
 
-    df = pran.read_price_data()
+    df = pran.read_price_data(fp)
     df_cheapest = pran.cheapest_history(df, 1)
     df_cheapest = pran.add_moving_avg(df)
     df_cheapest = df_cheapest.sort_values(by="diff_to_desired")
@@ -130,7 +136,7 @@ def main():
         mail.attach(html_content)
 
         # Add any attachments in the directory
-        for img in os.listdir("images"):
+        for img in os.listdir(fp+"images"):
             mail = attach_file(f"images/{img}", mail)
 
 
