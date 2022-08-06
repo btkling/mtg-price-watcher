@@ -29,6 +29,7 @@ def load_config(file_path):
 
     return jscfg
 
+
 def attach_file(attachment_file, mail : MIMEMultipart):
     '''attach a file to the mail object
 
@@ -53,7 +54,6 @@ def attach_file(attachment_file, mail : MIMEMultipart):
     mail.attach(mimeBase)
 
     return mail
-
 
 
 def main():
